@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard – Sultan Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --accent: #5b4eff;
+        --accent2: #ff4e8b;
+        --dark: #0d0d14;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: #f5f4ff;
+        color: #1a1a2e;
+      }
+      .font-display {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.05em;
+      }
+
+      /* Sidebar */
+      #sidebar {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @media (max-width: 1023px) {
+        #sidebar {
+          transform: translateX(-100%);
+          position: fixed;
+          inset: 0 auto 0 0;
+          z-index: 200;
+          width: 260px;
+        }
+        #sidebar.open {
+          transform: translateX(0);
+        }
+      }
+
+      /* Nav item */
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.65rem 1rem;
+        border-radius: 0.875rem;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #6b7280;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .nav-item:hover {
+        background: rgba(91, 78, 255, 0.08);
+        color: var(--accent);
+      }
+      .nav-item.active {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 4px 16px rgba(91, 78, 255, 0.35);
+      }
+      .nav-item i {
+        width: 16px;
+        text-align: center;
+      }
+
+      /* Tab panels */
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* Table */
+      .data-table th {
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #9ca3af;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f0eeff;
+      }
+      .data-table td {
+        padding: 0.85rem 1rem;
+        font-size: 0.82rem;
+        border-bottom: 1px solid #fafafa;
+        vertical-align: middle;
+      }
+      .data-table tr:last-child td {
+        border-bottom: none;
+      }
+      .data-table tr:hover td {
+        background: #fdfcff;
+      }
+
+      /* Form inputs */
+      .form-input {
+        width: 100%;
+        padding: 0.6rem 0.9rem;
+        border: 1.5px solid rgba(91, 78, 255, 0.15);
+        border-radius: 0.875rem;
+        font-size: 0.85rem;
+        font-family: inherit;
+        font-weight: 600;
+        background: white;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(91, 78, 255, 0.1);
+      }
+      .form-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6b7280;
+        margin-bottom: 0.35rem;
+        display: block;
+      }
+
+      /* Buttons */
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+        padding: 0.6rem 1.25rem;
+        border-radius: 0.875rem;
+        font-weight: 900;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary:hover {
+        background: #4a3de0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(91, 78, 255, 0.35);
+      }
+      .btn-danger {
+        background: #fff0f0;
+        color: #e53e3e;
+        padding: 0.5rem 0.9rem;
+        border-radius: 0.75rem;
+        font-weight: 900;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-danger:hover {
+        background: #e53e3e;
+        color: white;
+      }
+      .btn-edit {
+        background: #f0eeff;
+        color: var(--accent);
+        padding: 0.5rem 0.9rem;
+        border-radius: 0.75rem;
+        font-weight: 900;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-edit:hover {
+        background: var(--accent);
+        color: white;
+      }
+      .btn-ghost {
+        background: white;
+        color: #6b7280;
+        padding: 0.55rem 1rem;
+        border-radius: 0.875rem;
+        font-weight: 800;
+        font-size: 0.78rem;
+        border: 1.5px solid #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 300;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-box {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      @keyframes modalPop {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Toast */
+      #toast {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--dark);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        opacity: 0;
+        pointer-events: none;
+        white-space: nowrap;
+        z-index: 999;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      #toast.success {
+        background: #00a651;
+      }
+      #toast.error {
+        background: #e53e3e;
+      }
+
+      /* Stat cards */
+      .stat-card {
+        background: white;
+        border-radius: 1.25rem;
+        padding: 1.25rem 1.5rem;
+        border: 1.5px solid rgba(91, 78, 255, 0.08);
+      }
+
+      /* Spinner */
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2.5px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: inline-block;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Image preview */
+      #img-preview {
+        border-radius: 1rem;
+        overflow: hidden;
+        background: #f0eeff;
+        display: none;
+      }
+      #img-preview.show {
+        display: block;
+      }
+
+      /* Badge */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.6rem;
+        border-radius: 100px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .badge-sale-sm {
+        background: linear-gradient(135deg, #ff4e8b, #ff6b35);
+        color: white;
+      }
+      .badge-new-sm {
+        background: linear-gradient(135deg, #00c6a2, #00a3ff);
+        color: white;
+      }
+      .badge-ok {
+        background: #e8fff3;
+        color: #00a651;
+      }
+      .badge-out {
+        background: #fff0f0;
+        color: #e53e3e;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ─── LOGIN OVERLAY ─────────────────────────────────────── -->
+    <div
+      id="loginOverlay"
+      class="fixed inset-0 z-[500] flex items-center justify-center p-4"
+      style="background: #f5f4ff"
+    >
+      <div class="w-full max-w-sm">
+        <div class="text-center mb-8">
+          <a
+            href="index.html"
+            class="font-display text-3xl text-gray-900"
+            style="letter-spacing: 0.08em"
+          >
+            Sultan<span style="color: var(--accent)">Store</span>
+          </a>
+          <p
+            class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mt-2"
+          >
+            Admin Dashboard
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-7 shadow-xl border border-indigo-50">
+          <h2
+            class="font-display text-2xl mb-6 text-center"
+            style="letter-spacing: 0.06em"
+          >
+            MASUK PANEL
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="form-label">Username</label>
+              <input
+                type="text"
+                id="loginUser"
+                class="form-input"
+                placeholder="Username admin"
+                autocomplete="username"
+              />
+            </div>
+            <div>
+              <label class="form-label">Password</label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="loginPass"
+                  class="form-input pr-10"
+                  placeholder="Password"
+                  autocomplete="current-password"
+                />
+                <button
+                  type="button"
+                  onclick="togglePass()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm"
+                >
+                  <i class="fas fa-eye" id="eyeIcon"></i>
+                </button>
+              </div>
+            </div>
+            <p id="loginError" class="text-xs text-red-500 font-bold hidden">
+              Username atau password salah!
+            </p>
+            <button
+              onclick="doLogin()"
+              id="loginBtn"
+              class="btn-primary w-full py-3 text-sm"
+            >
+              Masuk <i class="fas fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <p class="text-center text-xs text-gray-400 mt-4">
+          <a
+            href="index.html"
+            class="font-bold hover:text-indigo-600 transition"
+            >← Kembali ke Toko</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- ─── DASHBOARD ─────────────────────────────────────────── -->
+    <div id="dashboardWrap" class="hidden min-h-screen flex">
+      <!-- Sidebar overlay (mobile) -->
+      <div
+        id="sidebarOverlay"
+        class="fixed inset-0 bg-black/40 z-[199] hidden lg:hidden"
+        onclick="closeSidebar()"
+      ></div>
+
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="w-64 bg-white border-r border-indigo-50 flex flex-col min-h-screen lg:relative"
+      >
+        <div class="p-5 border-b border-indigo-50">
+          <a
+            href="index.html"
+            class="font-display text-xl text-gray-900"
+            style="letter-spacing: 0.08em"
+          >
+            Sultan<span style="color: var(--accent)">Store</span>
+          </a>
+          <p
+            class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mt-0.5"
+          >
+            Admin Panel
+          </p>
+        </div>
+
+        <nav class="p-3 flex-1 space-y-1">
+          <div
+            class="nav-item active"
+            onclick="switchTab('overview')"
+            id="nav-overview"
+          >
+            <i class="fas fa-chart-pie"></i> Overview
+          </div>
+          <div
+            class="nav-item"
+            onclick="switchTab('products')"
+            id="nav-products"
+          >
+            <i class="fas fa-box"></i> Produk
+          </div>
+          <div class="nav-item" onclick="switchTab('banner')" id="nav-banner">
+            <i class="fas fa-image"></i> Banner
+          </div>
+          <div
+            class="nav-item"
+            onclick="switchTab('testimoni')"
+            id="nav-testimoni"
+          >
+            <i class="fas fa-star"></i> Testimoni
+          </div>
+        </nav>
+
+        <div class="p-3 border-t border-indigo-50">
+          <div
+            class="nav-item text-red-400 hover:bg-red-50 hover:text-red-500"
+            onclick="doLogout()"
+          >
+            <i class="fas fa-sign-out-alt"></i> Keluar
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <div class="flex-1 flex flex-col min-w-0">
+        <!-- Topbar -->
+        <header
+          class="bg-white border-b border-indigo-50 px-4 h-14 flex items-center gap-3 sticky top-0 z-10"
+        >
+          <button
+            class="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500"
+            onclick="openSidebar()"
+          >
+            <i class="fas fa-bars text-sm"></i>
+          </button>
+          <h1
+            id="topbar-title"
+            class="font-display text-lg text-gray-900"
+            style="letter-spacing: 0.06em"
+          >
+            OVERVIEW
+          </h1>
+          <div class="ml-auto flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-black"
+              style="background: var(--accent)"
+            >
+              A
+            </div>
+            <span class="text-xs font-black text-gray-600 hidden sm:block"
+              >Admin</span
+            >
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 p-4 md:p-6 overflow-auto">
+          <!-- ── OVERVIEW ─────────────────────────────────── -->
+          <div id="tab-overview" class="tab-panel active">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="stat-card">
+                <p
+                  class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1"
+                >
+                  Total Produk
+                </p>
+                <p
+                  class="font-display text-3xl"
+                  style="color: var(--accent)"
+                  id="stat-total"
+                >
+                  –
+                </p>
+              </div>
+              <div class="stat-card">
+                <p
+                  class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1"
+                >
+                  Stok Habis
+                </p>
+                <p class="font-display text-3xl text-red-500" id="stat-habis">
+                  –
+                </p>
+              </div>
+              <div class="stat-card">
+                <p
+                  class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1"
+                >
+                  Testimoni
+                </p>
+                <p class="font-display text-3xl text-green-500" id="stat-testi">
+                  –
+                </p>
+              </div>
+              <div class="stat-card">
+                <p
+                  class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1"
+                >
+                  Rating Avg
+                </p>
+                <p
+                  class="font-display text-3xl text-yellow-500"
+                  id="stat-rating"
+                >
+                  –
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 border border-indigo-50">
+              <h3
+                class="font-display text-lg mb-4"
+                style="letter-spacing: 0.05em"
+              >
+                STOK MENIPIS
+              </h3>
+              <div id="low-stock-list" class="space-y-2"></div>
+            </div>
+          </div>
+
+          <!-- ── BANNER ─────────────────────────────────────── -->
+          <div id="tab-banner" class="tab-panel">
+            <div class="flex items-center justify-between mb-5 gap-3 flex-wrap">
+              <h2 class="font-display text-2xl" style="letter-spacing: 0.05em">
+                KELOLA BANNER
+              </h2>
+              <button
+                class="btn-primary flex items-center gap-2"
+                onclick="openBannerModal()"
+              >
+                <i class="fas fa-plus text-xs"></i> Tambah Banner
+              </button>
+            </div>
+
+            <div
+              class="bg-white rounded-2xl border border-indigo-50 overflow-hidden"
+            >
+              <div class="overflow-x-auto">
+                <table class="data-table w-full">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Gambar</th>
+                      <th class="text-left">Judul</th>
+                      <th class="text-left hidden md:table-cell">Sub Judul</th>
+                      <th class="text-left hidden md:table-cell">
+                        Posisi Teks
+                      </th>
+                      <th class="text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="banner-tbody">
+                    <tr>
+                      <td
+                        colspan="5"
+                        class="text-center py-12 text-gray-400 font-bold text-sm"
+                      >
+                        <div
+                          class="spinner mx-auto mb-3"
+                          style="
+                            border-color: rgba(91, 78, 255, 0.2);
+                            border-top-color: var(--accent);
+                          "
+                        ></div>
+                        Memuat data...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── PRODUK ────────────────────────────────────── -->
+          <div id="tab-products" class="tab-panel">
+            <div class="flex items-center justify-between mb-5 gap-3 flex-wrap">
+              <h2 class="font-display text-2xl" style="letter-spacing: 0.05em">
+                KELOLA PRODUK
+              </h2>
+              <button
+                class="btn-primary flex items-center gap-2"
+                onclick="openProductModal()"
+              >
+                <i class="fas fa-plus text-xs"></i> Tambah Produk
+              </button>
+            </div>
+
+            <div
+              class="bg-white rounded-2xl border border-indigo-50 overflow-hidden"
+            >
+              <div class="overflow-x-auto">
+                <table class="data-table w-full">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Gambar</th>
+                      <th class="text-left">Nama</th>
+                      <th class="text-left hidden md:table-cell">Kategori</th>
+                      <th class="text-left hidden sm:table-cell">Harga</th>
+                      <th class="text-left hidden sm:table-cell">Stok</th>
+                      <th class="text-left hidden md:table-cell">Badge</th>
+                      <th class="text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="product-tbody">
+                    <tr>
+                      <td
+                        colspan="7"
+                        class="text-center py-12 text-gray-400 font-bold text-sm"
+                      >
+                        <div
+                          class="spinner mx-auto mb-3"
+                          style="
+                            border-color: rgba(91, 78, 255, 0.2);
+                            border-top-color: var(--accent);
+                          "
+                        ></div>
+                        Memuat data...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TESTIMONI ─────────────────────────────────── -->
+          <div id="tab-testimoni" class="tab-panel">
+            <div class="flex items-center justify-between mb-5 gap-3 flex-wrap">
+              <h2 class="font-display text-2xl" style="letter-spacing: 0.05em">
+                KELOLA TESTIMONI
+              </h2>
+              <button
+                class="btn-primary flex items-center gap-2"
+                onclick="openTestiModal()"
+              >
+                <i class="fas fa-plus text-xs"></i> Tambah Testimoni
+              </button>
+            </div>
+
+            <div
+              class="bg-white rounded-2xl border border-indigo-50 overflow-hidden"
+            >
+              <div class="overflow-x-auto">
+                <table class="data-table w-full">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Nama</th>
+                      <th class="text-left hidden sm:table-cell">Pesan</th>
+                      <th class="text-left hidden md:table-cell">Rating</th>
+                      <th class="text-left hidden md:table-cell">Tanggal</th>
+                      <th class="text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="testi-tbody">
+                    <tr>
+                      <td
+                        colspan="5"
+                        class="text-center py-12 text-gray-400 font-bold text-sm"
+                      >
+                        <div
+                          class="spinner mx-auto mb-3"
+                          style="
+                            border-color: rgba(91, 78, 255, 0.2);
+                            border-top-color: var(--accent);
+                          "
+                        ></div>
+                        Memuat data...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ─── MODAL BANNER ─────────────────────────────────────── -->
+    <div id="bannerModal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="flex items-center justify-between mb-5">
+          <h3
+            class="font-display text-2xl"
+            id="bannerModalTitle"
+            style="letter-spacing: 0.06em"
+          >
+            TAMBAH BANNER
+          </h3>
+          <button
+            onclick="closeBannerModal()"
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition text-sm"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <input type="hidden" id="b-id" />
+          <div>
+            <label class="form-label">Judul *</label>
+            <input
+              type="text"
+              id="b-judul"
+              class="form-input"
+              placeholder="SEMPAK SERIES"
+            />
+          </div>
+          <div>
+            <label class="form-label">Sub Judul</label>
+            <input
+              type="text"
+              id="b-subjudul"
+              class="form-input"
+              placeholder="Kondisi Mulus 100% · Bergaransi"
+            />
+          </div>
+          <div>
+            <label class="form-label">URL Gambar *</label>
+            <input
+              type="text"
+              id="b-gambar"
+              class="form-input"
+              placeholder="https://... atau nama-file.jpg"
+            />
+            <p class="text-[10px] text-gray-400 mt-1 font-bold">
+              Gunakan URL gambar online atau nama file yang sudah diupload
+            </p>
+          </div>
+          <div>
+            <label class="form-label">Posisi Teks</label>
+            <select id="b-posisi" class="form-input">
+              <option value="kiri">Kiri</option>
+              <option value="kanan">Kanan</option>
+            </select>
+          </div>
+          <!-- Preview -->
+          <div
+            id="b-preview"
+            class="hidden rounded-xl overflow-hidden aspect-[3/1] bg-gray-100 relative"
+          >
+            <img
+              id="b-preview-img"
+              src=""
+              class="w-full h-full object-cover opacity-60"
+            />
+            <div
+              class="absolute inset-0 flex items-end p-4"
+              style="
+                background: linear-gradient(
+                  to top,
+                  rgba(13, 13, 20, 0.8) 0%,
+                  transparent 60%
+                );
+              "
+            >
+              <div>
+                <p
+                  id="b-preview-judul"
+                  class="text-white font-black text-lg uppercase"
+                ></p>
+                <p
+                  id="b-preview-sub"
+                  class="text-white/60 text-xs font-bold uppercase"
+                ></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button onclick="closeBannerModal()" class="btn-ghost flex-1">
+            Batal
+          </button>
+          <button
+            onclick="saveBanner()"
+            id="saveBannerBtn"
+            class="btn-primary flex-1 flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-save"></i> Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MODAL PRODUK ──────────────────────────────────────── -->
+    <div id="productModal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="flex items-center justify-between mb-5">
+          <h3
+            class="font-display text-2xl"
+            id="productModalTitle"
+            style="letter-spacing: 0.06em"
+          >
+            TAMBAH PRODUK
+          </h3>
+          <button
+            onclick="closeProductModal()"
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition text-sm"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <input type="hidden" id="p-id" />
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="form-label">Nama Produk *</label>
+              <input
+                type="text"
+                id="p-nama"
+                class="form-input"
+                placeholder="Nama produk"
+              />
+            </div>
+            <div>
+              <label class="form-label">Kategori *</label>
+              <select id="p-cat" class="form-input">
+                <option value="">Pilih kategori</option>
+                <option value="HandPhone">HandPhone</option>
+                <option value="Laptop">Laptop</option>
+                <option value="Kamera">Kamera</option>
+                <option value="Tablet">Tablet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="form-label">Harga *</label>
+              <input
+                type="text"
+                id="p-harga"
+                class="form-input"
+                placeholder="Rp 5.000.000"
+              />
+            </div>
+            <div>
+              <label class="form-label">Harga Coret</label>
+              <input
+                type="text"
+                id="p-hargacoret"
+                class="form-input"
+                placeholder="Rp 7.000.000"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="form-label">Stok *</label>
+              <input
+                type="number"
+                id="p-stok"
+                class="form-input"
+                placeholder="0"
+                min="0"
+              />
+            </div>
+            <div>
+              <label class="form-label">Badge</label>
+              <select id="p-badge" class="form-input">
+                <option value="sale">SALE</option>
+                <option value="new">NEW</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">Deskripsi</label>
+            <textarea
+              id="p-deskripsi"
+              class="form-input"
+              rows="3"
+              placeholder="Deskripsi produk..."
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="form-label">Kondisi</label>
+              <input
+                type="text"
+                id="p-kondisi"
+                class="form-input"
+                placeholder="Second Mulus"
+              />
+            </div>
+            <div>
+              <label class="form-label">Garansi</label>
+              <input
+                type="text"
+                id="p-garansi"
+                class="form-input"
+                placeholder="Garansi Toko 7 Hari"
+              />
+            </div>
+            <div>
+              <label class="form-label">Pengiriman</label>
+              <input
+                type="text"
+                id="p-pengiriman"
+                class="form-input"
+                placeholder="Aman + Bubble Wrap"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">Upload Gambar</label>
+            <div
+              class="border-2 border-dashed border-indigo-200 rounded-xl p-4 text-center hover:border-indigo-400 transition cursor-pointer"
+              onclick="document.getElementById('p-image-file').click()"
+            >
+              <i
+                class="fas fa-cloud-upload-alt text-2xl mb-2"
+                style="color: var(--accent)"
+              ></i>
+              <p class="text-xs font-bold text-gray-500">
+                Klik untuk pilih gambar
+              </p>
+              <p class="text-[10px] text-gray-400 mt-0.5">
+                JPG, PNG, WebP — maks 2MB
+              </p>
+              <input
+                type="file"
+                id="p-image-file"
+                accept="image/*"
+                class="hidden"
+                onchange="previewImage(event)"
+              />
+            </div>
+            <div
+              id="img-preview"
+              class="mt-3 h-32 flex items-center justify-center"
+            >
+              <img
+                id="img-preview-img"
+                src=""
+                class="max-h-full max-w-full object-contain rounded-lg"
+              />
+            </div>
+            <div class="mt-2">
+              <label class="form-label">Atau masukkan URL gambar</label>
+              <input
+                type="text"
+                id="p-images"
+                class="form-input"
+                placeholder="https://... atau nama-file.jpg"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button onclick="closeProductModal()" class="btn-ghost flex-1">
+            Batal
+          </button>
+          <button
+            onclick="saveProduct()"
+            id="saveProductBtn"
+            class="btn-primary flex-1 flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-save"></i> Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MODAL TESTIMONI ───────────────────────────────────── -->
+    <div id="testiModal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="flex items-center justify-between mb-5">
+          <h3
+            class="font-display text-2xl"
+            id="testiModalTitle"
+            style="letter-spacing: 0.06em"
+          >
+            TAMBAH TESTIMONI
+          </h3>
+          <button
+            onclick="closeTestiModal()"
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition text-sm"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <input type="hidden" id="t-id" />
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="form-label">Nama *</label>
+              <input
+                type="text"
+                id="t-nama"
+                class="form-input"
+                placeholder="Nama pembeli"
+              />
+            </div>
+            <div>
+              <label class="form-label">Rating *</label>
+              <select id="t-rating" class="form-input">
+                <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                <option value="4">⭐⭐⭐⭐ (4)</option>
+                <option value="3">⭐⭐⭐ (3)</option>
+                <option value="2">⭐⭐ (2)</option>
+                <option value="1">⭐ (1)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Pesan *</label>
+            <textarea
+              id="t-pesan"
+              class="form-input"
+              rows="3"
+              placeholder="Isi testimoni..."
+            ></textarea>
+          </div>
+          <div>
+            <label class="form-label">Tanggal</label>
+            <input
+              type="text"
+              id="t-tgl"
+              class="form-input"
+              placeholder="Kemarin / 2 Jam yang lalu"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button onclick="closeTestiModal()" class="btn-ghost flex-1">
+            Batal
+          </button>
+          <button
+            onclick="saveTestimoni()"
+            id="saveTestiBtn"
+            class="btn-primary flex-1 flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-save"></i> Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CONFIRM MODAL ─────────────────────────────────────── -->
+    <div id="confirmModal" class="modal-overlay">
+      <div class="modal-box max-w-sm text-center">
+        <div
+          class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-trash text-red-500 text-xl"></i>
+        </div>
+        <h3 class="font-display text-2xl mb-2" style="letter-spacing: 0.06em">
+          HAPUS DATA?
+        </h3>
+        <p class="text-sm text-gray-500 mb-6" id="confirmMsg">
+          Data ini akan dihapus permanen.
+        </p>
+        <div class="flex gap-3">
+          <button onclick="closeConfirm()" class="btn-ghost flex-1">
+            Batal
+          </button>
+          <button
+            onclick="confirmAction()"
+            id="confirmBtn"
+            class="btn-danger flex-1 py-2.5 text-sm font-black uppercase"
+          >
+            <i class="fas fa-trash mr-1"></i> Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TOAST ─────────────────────────────────────────────── -->
+    <div id="toast"></div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

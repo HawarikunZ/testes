@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Produk – Sultan Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --accent: #5b4eff;
+        --accent2: #ff4e8b;
+        --dark: #0d0d14;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: #f5f4ff;
+        color: #1a1a2e;
+      }
+      .font-display {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.04em;
+      }
+
+      /* Cursor — only on real pointer devices */
+      @media (pointer: fine) {
+        body {
+          cursor: none;
+        }
+        #cursor {
+          width: 12px;
+          height: 12px;
+          background: var(--accent);
+          border-radius: 50%;
+          position: fixed;
+          z-index: 9999;
+          pointer-events: none;
+          transition:
+            transform 0.15s ease,
+            background 0.2s;
+          transform: translate(-50%, -50%);
+          display: block;
+        }
+        #cursor-ring {
+          width: 36px;
+          height: 36px;
+          border: 2px solid var(--accent);
+          border-radius: 50%;
+          position: fixed;
+          z-index: 9998;
+          pointer-events: none;
+          transition:
+            transform 0.35s ease,
+            opacity 0.3s;
+          transform: translate(-50%, -50%);
+          opacity: 0.5;
+          display: block;
+        }
+        .btn-wa,
+        .btn-share,
+        .gallery-thumb {
+          cursor: none;
+        }
+      }
+      @media (pointer: coarse) {
+        #cursor,
+        #cursor-ring {
+          display: none !important;
+        }
+        .btn-wa,
+        .btn-share,
+        .gallery-thumb,
+        .slide-btn {
+          cursor: pointer !important;
+        }
+        /* Show slide buttons always on touch */
+        .slide-btn {
+          opacity: 1 !important;
+        }
+      }
+
+      /* Header */
+      header {
+        background: rgba(245, 244, 255, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(91, 78, 255, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      /* Image gallery */
+      .gallery-main {
+        border-radius: 2rem;
+        overflow: hidden;
+        background: #eae8ff;
+        position: relative;
+      }
+      .gallery-thumb {
+        border-radius: 1rem;
+        overflow: hidden;
+        cursor: none;
+        border: 2px solid transparent;
+        transition: all 0.25s;
+      }
+      .gallery-thumb.active {
+        border-color: var(--accent);
+        box-shadow: 0 4px 16px rgba(91, 78, 255, 0.3);
+      }
+      .gallery-thumb:hover {
+        transform: scale(1.05);
+      }
+
+      /* Slider */
+      #image-slider {
+        display: flex;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        width: 100%;
+      }
+      #image-slider img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      /* Slide btn */
+      .slide-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        transition: all 0.3s;
+        cursor: none;
+        border: none;
+      }
+      .gallery-main:hover .slide-btn {
+        opacity: 1;
+      }
+      .slide-btn:hover {
+        background: var(--accent);
+        color: white;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      /* Stok badge */
+      .stok-badge-available {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #e8fff3;
+        color: #00a651;
+        padding: 0.35rem 0.9rem;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .stok-badge-out {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #fff0f0;
+        color: #e53e3e;
+        padding: 0.35rem 0.9rem;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      /* Price */
+      .price-main {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.04em;
+        color: var(--accent);
+      }
+
+      /* CTA Button */
+      .btn-wa {
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: none;
+      }
+      .btn-wa:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(37, 211, 102, 0.35);
+      }
+      .btn-disabled {
+        background: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      /* Share button */
+      .btn-share {
+        background: white;
+        border: 1.5px solid rgba(91, 78, 255, 0.2);
+        transition: all 0.3s;
+        cursor: none;
+      }
+      .btn-share:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      /* Specs table */
+      .spec-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(91, 78, 255, 0.07);
+      }
+      .spec-row:last-child {
+        border-bottom: none;
+      }
+
+      /* Testimonial card */
+      .testi-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        border: 1.5px solid rgba(91, 78, 255, 0.08);
+        animation: fadeUp 0.5s ease forwards;
+        opacity: 0;
+      }
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+      }
+
+      /* Modal */
+      @keyframes modalPop {
+        from {
+          opacity: 0;
+          transform: scale(0.88) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .modal-box {
+        animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      /* No scrollbar */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Marquee */
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee 18s linear infinite;
+      }
+      @keyframes marquee {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* Pulse dot */
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.5);
+          opacity: 0.4;
+        }
+      }
+      .pulse-dot {
+        animation: pulse-dot 2s infinite;
+      }
+
+      /* Toast */
+      #toast {
+        position: fixed;
+        bottom: 5rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--dark);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 999;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* Sticky CTA mobile */
+      #sticky-cta {
+        transform: translateY(100%);
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+      }
+      #sticky-cta.visible {
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+    <div id="toast"></div>
+
+    <!-- HEADER -->
+    <header>
+      <nav class="container mx-auto px-4 h-14 md:h-20 flex items-center gap-4">
+        <a
+          href="index.html"
+          class="font-display text-xl md:text-2xl text-gray-900 flex-shrink-0"
+          style="letter-spacing: 0.08em"
+        >
+          CIHUY<span style="color: var(--accent)">SELEK</span>
+        </a>
+        <!-- Breadcrumb: hanya tampil di desktop -->
+        <div
+          class="hidden md:flex items-center gap-2 ml-4 text-xs font-bold text-gray-400 breadcrumb overflow-hidden"
+        >
+          <a
+            href="index.html"
+            class="hover:text-indigo-600 transition whitespace-nowrap"
+            >Katalog</a
+          >
+          <span>/</span>
+          <span
+            id="breadcrumb-cat"
+            class="text-gray-600 whitespace-nowrap"
+          ></span>
+          <span>/</span>
+          <span
+            id="breadcrumb-nama"
+            class="truncate max-w-[160px]"
+            style="color: var(--accent)"
+          ></span>
+        </div>
+        <!-- Mobile: back button -->
+        <a
+          href="index.html"
+          class="md:hidden ml-2 flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-gray-500"
+        >
+          <i class="fas fa-chevron-left text-[9px]"></i> Katalog
+        </a>
+        <div class="ml-auto flex-shrink-0">
+          <a
+            href="https://wa.me/6281333998839"
+            target="_blank"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-full text-white text-[10px] font-black uppercase"
+            style="background: var(--accent)"
+          >
+            <i class="fab fa-whatsapp"></i
+            ><span class="hidden md:inline"> WA Kami</span>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-5 md:py-8 max-w-6xl">
+      <!-- Back link: hanya di desktop -->
+      <a
+        href="index.html"
+        class="hidden md:inline-flex items-center gap-2 mb-8 text-xs font-black uppercase tracking-widest text-gray-400 hover:text-indigo-600 transition group"
+      >
+        <span
+          class="w-6 h-6 rounded-full flex items-center justify-center border-2 border-gray-200 group-hover:border-indigo-400 transition"
+        >
+          <i class="fas fa-chevron-left text-[8px]"></i>
+        </span>
+        Kembali ke Katalog
+      </a>
+
+      <div class="flex flex-col lg:flex-row gap-8 lg:gap-14">
+        <!-- ── LEFT: Image Gallery ── -->
+        <div class="w-full lg:w-1/2 flex flex-col gap-3">
+          <div class="gallery-main aspect-square shadow-2xl">
+            <div
+              id="image-slider"
+              style="width: 100%; overflow: hidden; height: 100%"
+            >
+              <div
+                id="slider-inner"
+                style="
+                  display: flex;
+                  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                  height: 100%;
+                "
+              ></div>
+            </div>
+            <button onclick="prevSlide()" class="slide-btn" style="left: 1rem">
+              <i class="fas fa-chevron-left text-sm"></i>
+            </button>
+            <button onclick="nextSlide()" class="slide-btn" style="right: 1rem">
+              <i class="fas fa-chevron-right text-sm"></i>
+            </button>
+            <!-- Dots -->
+            <div
+              id="dots-container"
+              class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2"
+            ></div>
+            <!-- Sold out overlay -->
+            <div
+              id="soldout-overlay"
+              class="hidden absolute inset-0 flex items-center justify-center"
+              style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px)"
+            >
+              <div
+                class="bg-white text-gray-900 px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl"
+              >
+                <i class="fas fa-box-open mr-2 text-red-500"></i>STOK HABIS
+              </div>
+            </div>
+          </div>
+
+          <!-- Thumbnail strip -->
+          <div
+            id="thumb-strip"
+            class="flex gap-2 overflow-x-auto no-scrollbar"
+          ></div>
+        </div>
+
+        <!-- ── RIGHT: Product Info ── -->
+        <div class="w-full lg:w-1/2 flex flex-col">
+          <!-- Category & badge -->
+          <div class="flex items-center gap-3 mb-3">
+            <span
+              id="p-cat"
+              class="font-black text-xs uppercase tracking-[0.2em]"
+              style="color: var(--accent)"
+            ></span>
+            <span id="p-stok-badge"></span>
+          </div>
+
+          <!-- Product name -->
+          <h1
+            id="p-nama"
+            class="font-display text-4xl md:text-6xl leading-none mb-4 uppercase text-gray-900"
+          ></h1>
+
+          <!-- Rating row -->
+          <div class="flex items-center gap-3 mb-5">
+            <div class="flex gap-1">
+              <i class="fas fa-star text-yellow-400 text-xs"></i>
+              <i class="fas fa-star text-yellow-400 text-xs"></i>
+              <i class="fas fa-star text-yellow-400 text-xs"></i>
+              <i class="fas fa-star text-yellow-400 text-xs"></i>
+              <i class="fas fa-star text-yellow-400 text-xs"></i>
+            </div>
+            <span class="text-xs font-bold text-gray-400"
+              >4.9 (128 ulasan)</span
+            >
+          </div>
+
+          <!-- Price -->
+          <div class="bg-white rounded-2xl p-5 mb-5 border border-indigo-100">
+            <p
+              id="p-harga-coret"
+              class="text-sm text-gray-400 line-through font-bold mb-1"
+            ></p>
+            <p id="p-harga" class="price-main text-5xl"></p>
+            <p
+              id="p-diskon"
+              class="text-xs font-black uppercase tracking-widest mt-2"
+              style="color: var(--accent2)"
+            ></p>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-5">
+            <h4
+              class="font-black text-xs uppercase tracking-[0.2em] text-gray-400 mb-2"
+            >
+              Deskripsi Unit
+            </h4>
+            <p
+              id="p-deskripsi"
+              class="text-gray-600 leading-relaxed text-sm"
+            ></p>
+          </div>
+
+          <!-- Specs -->
+          <div class="bg-white rounded-2xl p-5 mb-6 border border-indigo-100">
+            <h4
+              class="font-black text-xs uppercase tracking-[0.2em] text-gray-400 mb-3"
+            >
+              Informasi Produk
+            </h4>
+            <div id="p-specs">
+              <div class="spec-row">
+                <span class="text-xs font-bold text-gray-400 uppercase"
+                  >Kondisi</span
+                >
+                <span
+                  id="p-kondisi"
+                  class="text-xs font-black uppercase"
+                  style="color: var(--accent)"
+                  >Second Mulus</span
+                >
+              </div>
+              <div class="spec-row">
+                <span class="text-xs font-bold text-gray-400 uppercase"
+                  >Garansi</span
+                >
+                <span
+                  id="p-garansi"
+                  class="text-xs font-black uppercase text-gray-800"
+                  >Garansi Toko 7 Hari</span
+                >
+              </div>
+              <div class="spec-row">
+                <span class="text-xs font-bold text-gray-400 uppercase"
+                  >Pengiriman</span
+                >
+                <span
+                  id="p-pengiriman"
+                  class="text-xs font-black uppercase text-gray-800"
+                  >Aman + Bubble Wrap</span
+                >
+              </div>
+              <div class="spec-row" id="stok-row">
+                <span class="text-xs font-bold text-gray-400 uppercase"
+                  >Stok</span
+                >
+                <span
+                  id="stok-val"
+                  class="text-xs font-black uppercase text-gray-800"
+                ></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="flex gap-3">
+            <button
+              onclick="checkStokAndChat()"
+              id="wa-btn"
+              class="btn-wa flex-1 py-4 text-white rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-xl uppercase tracking-wider"
+            >
+              <i class="fab fa-whatsapp text-xl"></i> Chat Admin Sekarang
+            </button>
+            <button
+              onclick="shareProduct()"
+              class="btn-share w-14 h-14 rounded-2xl flex items-center justify-center text-gray-500 flex-shrink-0 font-bold"
+            >
+              <i class="fas fa-share-alt"></i>
+            </button>
+          </div>
+
+          <!-- Trust badges -->
+          <div class="grid grid-cols-3 gap-2 mt-5">
+            <div
+              class="bg-white rounded-xl p-3 text-center border border-indigo-50"
+            >
+              <i
+                class="fas fa-shield-alt text-green-500 text-base mb-1 block"
+              ></i>
+              <span
+                class="text-[9px] font-black uppercase tracking-wider text-gray-500"
+                >Aman & Terpercaya</span
+              >
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 text-center border border-indigo-50"
+            >
+              <i class="fas fa-undo text-indigo-500 text-base mb-1 block"></i>
+              <span
+                class="text-[9px] font-black uppercase tracking-wider text-gray-500"
+                >Garansi 7 Hari</span
+              >
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 text-center border border-indigo-50"
+            >
+              <i class="fas fa-bolt text-yellow-500 text-base mb-1 block"></i>
+              <span
+                class="text-[9px] font-black uppercase tracking-wider text-gray-500"
+                >Respon Cepat</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MARQUEE ── -->
+      <div
+        class="overflow-hidden mt-16 py-3 rounded-2xl"
+        style="background: var(--accent)"
+      >
+        <div class="marquee-track">
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >⚡ Unit Gahar</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >🔥 Harga Getar</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >✅ Bergaransi</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >📦 Stok Terbaru</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >💬 Admin Ramah</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >⚡ Unit Gahar</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >🔥 Harga Getar</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >✅ Bergaransi</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >📦 Stok Terbaru</span
+          >
+          <span
+            class="text-white font-black text-xs uppercase tracking-[0.2em] px-8"
+            >💬 Admin Ramah</span
+          >
+        </div>
+      </div>
+
+      <!-- ── TESTIMONIALS ── -->
+      <section class="mt-16">
+        <div class="flex items-center justify-between mb-8">
+          <h2
+            class="font-display text-4xl text-gray-900 uppercase"
+            style="letter-spacing: 0.06em"
+          >
+            APA KATA MEREKA?
+          </h2>
+          <div
+            class="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-indigo-100"
+          >
+            <i class="fas fa-star text-yellow-400 text-xs"></i>
+            <span class="text-sm font-black text-gray-800">4.9</span>
+            <span class="text-xs font-bold text-gray-400">/ 5.0</span>
+          </div>
+        </div>
+        <div
+          id="testi-container"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+        ></div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer
+      class="mt-16 py-10 border-t border-indigo-100"
+      style="background: #f0eeff"
+    >
+      <div class="container mx-auto px-4 text-center">
+        <a
+          href="index.html"
+          class="font-display text-2xl text-gray-900"
+          style="letter-spacing: 0.08em"
+        >
+          Sultan<span style="color: var(--accent)">Store</span>
+        </a>
+        <p
+          class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-3 mb-4"
+        >
+          © 2026 Sultan Store – ALL RIGHTS RESERVED
+        </p>
+        <div
+          class="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400"
+        >
+          SUPPORT BY
+          <a
+            href="https://hawaritech.com"
+            target="_blank"
+            class="text-white px-2 py-0.5 rounded italic hover:opacity-80 transition"
+            style="background: var(--accent)"
+            >HawariTech.</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- STICKY BOTTOM CTA (mobile) -->
+    <div
+      id="sticky-cta"
+      class="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden"
+      style="
+        background: rgba(245, 244, 255, 0.95);
+        backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(91, 78, 255, 0.1);
+      "
+    >
+      <button
+        onclick="checkStokAndChat()"
+        id="sticky-wa-btn"
+        class="btn-wa w-full py-4 text-white rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-xl uppercase tracking-wider"
+      >
+        <i class="fab fa-whatsapp text-xl"></i> Chat Admin Sekarang
+      </button>
+    </div>
+
+    <!-- SOLD OUT MODAL -->
+    <div
+      id="soldOutModal"
+      class="fixed inset-0 z-[200] hidden items-center justify-center p-4"
+    >
+      <div
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onclick="closeModal()"
+      ></div>
+      <div
+        class="modal-box bg-white rounded-[2rem] p-8 max-w-sm w-full relative z-10 text-center shadow-2xl"
+      >
+        <div
+          class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+          style="background: #fff0f0"
+        >
+          <i class="fas fa-times-circle text-2xl text-red-500"></i>
+        </div>
+        <h3
+          class="font-display text-3xl mb-2 uppercase"
+          style="letter-spacing: 0.06em"
+        >
+          WADUH, HABIS!
+        </h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-6">
+          Barang ini baru saja habis terjual. Lain kali lebih gercep ya!
+        </p>
+        <button
+          onclick="closeModal()"
+          class="w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm text-white transition hover:opacity-90"
+          style="background: var(--dark)"
+        >
+          Kembali ke Katalog
+        </button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
